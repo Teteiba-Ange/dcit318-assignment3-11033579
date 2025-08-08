@@ -1,5 +1,50 @@
 ﻿using System;
 
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Enter Amount:");
+        string inputAmount = Console.ReadLine();
+        decimal amount = decimal.Parse(inputAmount);
+
+        Console.WriteLine("Enter Category:");
+        string category = Console.ReadLine();
+
+        var transaction = new Transaction(
+            Id: 1,
+            Date: DateTime.Now,
+            Amount: amount,
+            Category: category
+        );
+
+        // Choose processor
+        ITransactionProcessor processor;
+
+        Console.WriteLine("Select processor: 1. Bank  2. Mobile  3. Crypto");
+        string choice = Console.ReadLine();
+
+        switch (choice)
+        {
+            case "1":
+                processor = new BankTransferProcessor();
+                break;
+            case "2":
+                processor = new MobileMoneyProcessor();
+                break;
+            case "3":
+                processor = new CryptoWalletProcessor();
+                break;
+            default:
+                Console.WriteLine("Invalid choice.");
+                return;
+        }
+
+        processor.Process(transaction);
+    }
+}
+
+
 public record Transaction
 (
     int Id,
@@ -51,46 +96,3 @@ public class CryptoWalletProcessor : ITransactionProcessor
 }
 
 // Main program
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine("Enter Amount:");
-        string inputAmount = Console.ReadLine();
-        decimal amount = decimal.Parse(inputAmount);
-
-        Console.WriteLine("Enter Category:");
-        string category = Console.ReadLine();
-
-        var transaction = new Transaction(
-            Id: 1,
-            Date: DateTime.Now,
-            Amount: amount,
-            Category: category
-        );
-
-        // Choose processor
-        ITransactionProcessor processor;
-
-        Console.WriteLine("Select processor: 1. Bank  2. Mobile  3. Crypto");
-        string choice = Console.ReadLine();
-
-        switch (choice)
-        {
-            case "1":
-                processor = new BankTransferProcessor();
-                break;
-            case "2":
-                processor = new MobileMoneyProcessor();
-                break;
-            case "3":
-                processor = new CryptoWalletProcessor();
-                break;
-            default:
-                Console.WriteLine("Invalid choice.");
-                return;
-        }
-
-        processor.Process(transaction);
-    }
-}
