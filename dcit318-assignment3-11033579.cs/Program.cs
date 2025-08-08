@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#region Models
+//Finance management system  Question 1
 
 public record Transaction(
     Guid Id,
@@ -10,9 +10,9 @@ public record Transaction(
     string Category
 );
 
-#endregion
 
-#region Account System
+
+// Account System
 
 public class Account
 {
@@ -87,9 +87,7 @@ public class CryptoWalletProcessor : ITransactionProcessor
     }
 }
 
-#endregion
-
-#region FinanceApp
+//Finance app
 
 public class FinanceApp
 {
@@ -97,7 +95,7 @@ public class FinanceApp
 
     public void Run()
     {
-        Console.WriteLine("Welcome to the Finance App");
+        Console.WriteLine("You are welcome to the Finance App");
 
         SavingsAccount account = new SavingsAccount("AC123456", 1000m);
 
