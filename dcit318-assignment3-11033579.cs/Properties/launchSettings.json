@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "dcit318-assignment3-11033579.cs": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

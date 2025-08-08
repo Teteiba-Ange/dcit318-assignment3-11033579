@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "8ZTTpfseW8U=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\AJ\\Desktop\\Devotional\\3\\dcit318-assignment3-11033579.cs\\dcit318-assignment3-11033579.cs.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\AJ\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.22.1\\microsoft.visualstudio.azure.containers.tools.targets.1.22.1.nupkg.sha512"
+  ],
+  "logs": []
+}
