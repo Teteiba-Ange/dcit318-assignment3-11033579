@@ -25,6 +25,8 @@ publc class BankTransferProcessor : ItransactionProcessor
         Console.WriteLine("This is your bank transfer");
 
         Console.WriteLine("Please Enter Amount");
+        int user = Console.ReadLine();
+        Amount = user
         Console.WriteLine("Please Enter Category");
     }
 }
