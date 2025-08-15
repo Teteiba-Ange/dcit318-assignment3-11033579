@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
-//Finance management system  Question 1
-
-public record Transaction( 
+// Finance management system
+public record Transaction(
     Guid Id,
     decimal Amount,
     DateTime Date,
     string Category
 );
 
-
-
 // Account System
-
 public class Account
 {
     public string AccountNumber { get; }
@@ -54,10 +51,7 @@ public sealed class SavingsAccount : Account
     }
 }
 
-
-
 // Processor Interface and Classes
-
 public interface ITransactionProcessor
 {
     void Process(Transaction transaction);
@@ -87,15 +81,14 @@ public class CryptoWalletProcessor : ITransactionProcessor
     }
 }
 
-//Finance app
-
+// Finance app
 public class FinanceApp
 {
     private readonly List<Transaction> _transactions = new();
 
     public void Run()
     {
-        Console.WriteLine("You are welcome to the Finance App");
+        Console.WriteLine("Welcome to the Finance App");
 
         SavingsAccount account = new SavingsAccount("AC123456", 1000m);
 
@@ -130,27 +123,17 @@ public class FinanceApp
     }
 }
 
-
-
-
-
-public class Program
+// Healthcare Management System
+class Repository<T>
 {
-    public static void Main()
-    {
-        FinanceApp app = new FinanceApp();
-        app.Run();
-    }
-}
-// Question 2 Healthcare Management system
-//Entity Management
-class Repository<T> {
     private readonly List<T> _items = new List<T>();
-    public void Add(T item) => _items.Add(item)
-    public List<T> GetAll => new List<T>(_items)
-    T? GetById(Func<T, bool> predicate) => _items.FirstOrDefault(predicate);
 
-    bool Remove(Func<T, bool> predicate) {
+    public void Add(T item) => _items.Add(item);
+    public List<T> GetAll() => new List<T>(_items);
+    public T? GetById(Func<T, bool> predicate) => _items.FirstOrDefault(predicate);
+
+    public bool Remove(Func<T, bool> predicate)
+    {
         var item = GetById(predicate);
         if (item != null)
             return _items.Remove(item);
@@ -160,91 +143,88 @@ class Repository<T> {
 
 public class Patient
 {
-    private int Id { get; }
-    private string Name   { get; };
-    private int Age { get; };
-    private string Gender { get; };
+    public int Id { get; }
+    public string Name { get; }
+    public int Age { get; }
+    public string Gender { get; }
 
-
-    public Patient(int id,string name,int age, string gender)
+    public Patient(int id, string name, int age, string gender)
     {
-        this.Id = id;
-        this.Name = name;
-        this.Age = age;
-        this.Gender = gender;
+        Id = id;
+        Name = name;
+        Age = age;
+        Gender = gender;
     }
-    public override string toString()=>$"Id :{Id}, Name :{Name}  Age :{Age} Gender :{Gender}"
+
+    public override string ToString() => $"Id: {Id}, Name: {Name}, Age: {Age}, Gender: {Gender}";
 }
 
 public class Prescription
 {
-    private int Id { get; }
-    private int PatientId { get; };
-    private string MedicationName { get; };
-    private DateTime DateIssued { get; };
+    public int Id { get; }
+    public int PatientId { get; }
+    public string MedicationName { get; }
+    public DateTime DateIssued { get; }
 
-
-    public Prescription(int id, int patientid, string medicationName,DateTime dateIssued)
+    public Prescription(int id, int patientId, string medicationName, DateTime dateIssued)
     {
-        this.Id = id;
-        this.PatietId = patientid;
-        this.MedicationName = medicationName;
-        this.DateIssued = dateIssued;
+        Id = id;
+        PatientId = patientId;
+        MedicationName = medicationName;
+        DateIssued = dateIssued;
     }
-    public override string toString()=>
-        $"id :{Id} PateintId :{PatientId} MedicationName :{MedicationName} DateIssued :{DateIssued}"
+
+    public override string ToString() =>
+        $"Id: {Id}, PatientId: {PatientId}, MedicationName: {MedicationName}, DateIssued: {DateIssued}";
+}
 
 public class HealthSystemApp
 {
-    private readonly Repository<Patient> patientRepo = new Repository<Patient>();
-    private readonly Repository<Prescription> patientPrescription = new Repository<Prescription>();
+    private readonly Repository<Patient> _patientRepo = new Repository<Patient>();
+    private readonly Repository<Prescription> _patientPrescription = new Repository<Prescription>();
+    private readonly Dictionary<int, List<Prescription>> _prescriptionMap = new Dictionary<int, List<Prescription>>();
 
-    private readonly Dictionary<int, List<Prescription>> = new Dictionary<int,List<Prescription>>();
+    public void SeedData()
+    {
+        _patientRepo.Add(new Patient(1, "Angela", 20, "Female"));
+        _patientRepo.Add(new Patient(2, "Ulysis", 22, "Male"));
+        _patientRepo.Add(new Patient(3, "Andrew", 24, "Male"));
 
-            public void seedData()
+        _patientPrescription.Add(new Prescription(103, 1, "Decatylene", new DateTime(2024, 1, 2)));
+        _patientPrescription.Add(new Prescription(107, 2, "Amoxiclav", new DateTime(2024, 7, 9)));
+        _patientPrescription.Add(new Prescription(109, 3, "Tothema", new DateTime(2024, 11, 2)));
+        _patientPrescription.Add(new Prescription(102, 4, "Wormplex400", new DateTime(2024, 12, 2)));
+        _patientPrescription.Add(new Prescription(108, 5, "RooterMixture", new DateTime(2024, 1, 10)));
+    }
+
+    public void BuildPrescriptionMap()
+    {
+        _prescriptionMap.Clear();
+        var prescriptions = _patientPrescription.GetAll();
+
+        foreach (var prescription in prescriptions)
         {
-            patientRepo.Add(new Patient(1, 'Angela', 20, "Female"));
-            patientRepo.Add(new Patient(2, 'Ulysis', 22, "Male"));
-            patientRepo.Add(new Patient(3, 'Andrew', 24, "Male"));
-
-
-            patientPrescription.Add(new Prescription(103, 1, "Decatylene", new DateTime(2024, 1, 2)));
-            patientPrescription.Add(new Prescription(107, 2, "Amoxiclav", new DateTime(2024, 7, 9))); 
-            patientPrescription.Add(new Prescription(109, 3, "Tothema", new DateTime(2024, 11, 2)));
-            patientPrescription.Add(new Prescription(102, 4, "Wormplex400", new DateTime(2024, 12, 2)));
-            patientPrescription.Add(new Prescription(108, 5, "RooterMixture", new DateTime(2024, 1, 10)));
-
-            public void BuildPrescriptionMap()
-        {
-            _prescriptionMap.Clear();
-            var prescriptions = patientPrescription.GetAll();
-
-            foreach (var prescription in prescriptions)
+            if (!_prescriptionMap.ContainsKey(prescription.PatientId))
             {
-                if (!_prescriptionMap.ContainsKey(prescription.PatientId))
-                {
-                    _prescriptionMap[prescription.PatientId] = new List<Prescription>();
-                }
-                _prescriptionMap[prescription.PatientId].Add(prescription);
+                _prescriptionMap[prescription.PatientId] = new List<Prescription>();
             }
-
-
-
+            _prescriptionMap[prescription.PatientId].Add(prescription);
+        }
+    }
 
     public List<Prescription> GetPrescriptionsByPatientId(int patientId)
-        {
-            return _prescriptionMap.TryGetValue(patientId, out var prescriptions)
-                ? prescriptions
-                : new List<Prescription>();
-        }
+    {
+        return _prescriptionMap.TryGetValue(patientId, out var prescriptions)
+            ? prescriptions
+            : new List<Prescription>();
+    }
 
-        public void PrintAllPatients()
+    public void PrintAllPatients()
+    {
+        Console.WriteLine("\n--- PATIENT LIST ---");
+        foreach (var patient in _patientRepo.GetAll())
         {
-            Console.WriteLine("\n--- PATIENT LIST ---");
-            foreach (var patient in _patientRepo.GetAll())
-            {
-                Console.WriteLine(patient);
-            }
+            Console.WriteLine(patient);
         }
     }
 
@@ -278,19 +258,16 @@ class Program
 {
     static void Main()
     {
-        HealthSystemApp app = new HealthSystemApp();
+        // Run Finance App
+        FinanceApp financeApp = new FinanceApp();
+        financeApp.Run();
 
-        // Initialize data
-        app.SeedData();
-        app.BuildPrescriptionMap();
-
-        // Display patients
-        app.PrintAllPatients();
-
-        // Show prescriptions for sample patient (ID: 1)
-        app.PrintPrescriptionsForPatient(1);
-
-
+        // Run Health System App
+        HealthSystemApp healthApp = new HealthSystemApp();
+        healthApp.SeedData();
+        healthApp.BuildPrescriptionMap();
+        healthApp.PrintAllPatients();
+        healthApp.PrintPrescriptionsForPatient(1);
     }
 }
 
