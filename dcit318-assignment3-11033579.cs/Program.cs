@@ -268,11 +268,17 @@ class Program
         healthApp.BuildPrescriptionMap();
         healthApp.PrintAllPatients();
         healthApp.PrintPrescriptionsForPatient(1);
+
+        string filePath = " student.txt";
+        string[] Student = { "Student Id", "Full name", "Score" };
+
+        ststic void ReadFromFile(string filePath) { 
+        
+        }
     }
 }
 //Question 3 
-using System;
-using System.Collections.Generic;
+
 
 // Marker Interface for Inventory Items
 public interface IInventoryItem
@@ -381,11 +387,11 @@ public class WarehouseManager
 
     public void SeedData()
     {
-        _electronics.AddItem(new ElectronicItem(1, "Laptop", 10, "BrandA", 24));
-        _electronics.AddItem(new ElectronicItem(2, "Smartphone", 15, "BrandB", 12));
+        _electronics.AddItem(new ElectronicItem(1, "Ipad", 10, "BrandA", 24));
+        _electronics.AddItem(new ElectronicItem(2, "Desktop", 15, "BrandB", 12));
 
-        _groceries.AddItem(new GroceryItem(1, "Milk", 20, DateTime.Now.AddDays(7)));
-        _groceries.AddItem(new GroceryItem(2, "Bread", 30, DateTime.Now.AddDays(3)));
+        _groceries.AddItem(new GroceryItem(1, "Milo", 20, DateTime.Now.AddDays(7)));
+        _groceries.AddItem(new GroceryItem(2, "T-roll", 30, DateTime.Now.AddDays(3)));
     }
 
     public void PrintAllItems<T>(InventoryRepository<T> repo) where T : IInventoryItem
@@ -442,7 +448,7 @@ class Program
         // Test Exception Handling
         try
         {
-            manager._electronics.AddItem(new ElectronicItem(1, "Tablet", 5, "BrandC", 12)); // Duplicate ID
+            manager._electronics.AddItem(new ElectronicItem(1, "SmartPhone", 5, "BrandC", 12)); // Duplicate ID
         }
         catch (Exception ex)
         {
@@ -466,6 +472,34 @@ class Program
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
+    }
+}
+
+//Q4
+public class Student
+{
+    private int Id;
+    private String FullName;
+    private int Score;
+
+    public void GetGrade() {
+        if (Score >= 80 && Score <= 100) {
+            Console.WriteLine("A")
+        } else if (Score >= 70 && Score <= 79) { 
+        Console.WriteLine("B")
+        }
+        else if (Score >= 60 && Score <= 69)
+        {
+            Console.WriteLine("C")
+        }
+        else if (Score >= 50 && Score <= 59)
+        {
+            Console.WriteLine("D")
+        }
+        else { 
+         Console.WriteLine("F")
+        }
+
     }
 }
 
