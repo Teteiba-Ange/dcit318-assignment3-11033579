@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 //Finance management system  Question 1
 
-public record Transaction(
+public record Transaction( 
     Guid Id,
     decimal Amount,
     DateTime Date,
@@ -142,5 +142,61 @@ public class Program
         app.Run();
     }
 }
+// Question 2 Healthcare Management system
+//Entity Management
+class Repository<T> {
+    private readonly List<T> _items = new List<T>();
+    public void Add(T item) => _items.Add(item)
+    public List<T> GetAll => new List<T>(_items)
+    T? GetById(Func<T, bool> predicate) => _items.FirstOrDefault(predicate);
 
+    bool Remove(Func<T, bool> predicate) {
+        var item = GetById(predicate);
+        if (item != null)
+            return _items.Remove(item);
+        return false;
+    }
+}
+
+public class Patient
+{
+    private int Id { get; }
+    private string Name   { get; };
+    private int Age { get; };
+    private string Gender { get; };
+
+
+    public Patient(int id,string name,int age, string gender)
+    {
+        this.Id = id;
+        this.Name = name;
+        this.Age = age;
+        this.Gender = gender;
+    }
+    public override string toString()=>$"Id :{Id}, Name :{Name}  Age :{Age} Gender :{Gender}"
+}
+
+public class Prescription
+{
+    private int Id { get; }
+    private int PatientId { get; };
+    private string MedicationName { get; };
+    private DateTime DateIssued { get; };
+
+
+    public Prescription(int id, int patientid, string medicationName,DateTime dateIssued)
+    {
+        this.Id = id;
+        this.PatietId = patientid;
+        this.MedicationName = medicationName;
+        this.DateIssued = dateIssued;
+    }
+    public override string toString()=>
+        $"id :{Id} PateintId :{PatientId} MedicationName :{MedicationName} DateIssued :{DateIssued}"
+}
+
+public class HealthManagementSystem
+{
+
+}
 
