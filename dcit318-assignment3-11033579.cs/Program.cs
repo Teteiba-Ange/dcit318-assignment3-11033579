@@ -193,10 +193,104 @@ public class Prescription
     }
     public override string toString()=>
         $"id :{Id} PateintId :{PatientId} MedicationName :{MedicationName} DateIssued :{DateIssued}"
+
+public class HealthSystemApp
+{
+    private readonly Repository<Patient> patientRepo = new Repository<Patient>();
+    private readonly Repository<Prescription> patientPrescription = new Repository<Prescription>();
+
+    private readonly Dictionary<int, List<Prescription>> = new Dictionary<int,List<Prescription>>();
+
+            public void seedData()
+        {
+            patientRepo.Add(new Patient(1, 'Angela', 20, "Female"));
+            patientRepo.Add(new Patient(2, 'Ulysis', 22, "Male"));
+            patientRepo.Add(new Patient(3, 'Andrew', 24, "Male"));
+
+
+            patientPrescription.Add(new Prescription(103, 1, "Decatylene", new DateTime(2024, 1, 2)));
+            patientPrescription.Add(new Prescription(107, 2, "Amoxiclav", new DateTime(2024, 7, 9))); 
+            patientPrescription.Add(new Prescription(109, 3, "Tothema", new DateTime(2024, 11, 2)));
+            patientPrescription.Add(new Prescription(102, 4, "Wormplex400", new DateTime(2024, 12, 2)));
+            patientPrescription.Add(new Prescription(108, 5, "RooterMixture", new DateTime(2024, 1, 10)));
+
+            public void BuildPrescriptionMap()
+        {
+            _prescriptionMap.Clear();
+            var prescriptions = patientPrescription.GetAll();
+
+            foreach (var prescription in prescriptions)
+            {
+                if (!_prescriptionMap.ContainsKey(prescription.PatientId))
+                {
+                    _prescriptionMap[prescription.PatientId] = new List<Prescription>();
+                }
+                _prescriptionMap[prescription.PatientId].Add(prescription);
+            }
+
+
+
+
+    public List<Prescription> GetPrescriptionsByPatientId(int patientId)
+        {
+            return _prescriptionMap.TryGetValue(patientId, out var prescriptions)
+                ? prescriptions
+                : new List<Prescription>();
+        }
+
+        public void PrintAllPatients()
+        {
+            Console.WriteLine("\n--- PATIENT LIST ---");
+            foreach (var patient in _patientRepo.GetAll())
+            {
+                Console.WriteLine(patient);
+            }
+        }
+    }
+
+    public void PrintPrescriptionsForPatient(int patientId)
+    {
+        var patient = _patientRepo.GetById(p => p.Id == patientId);
+        if (patient == null)
+        {
+            Console.WriteLine($"\nPatient with ID {patientId} not found");
+            return;
+        }
+
+        Console.WriteLine($"\nPRESCRIPTIONS FOR {patient.Name} (ID: {patient.Id}):");
+        var prescriptions = GetPrescriptionsByPatientId(patientId);
+
+        if (prescriptions.Count == 0)
+        {
+            Console.WriteLine("No prescriptions found");
+            return;
+        }
+
+        foreach (var prescription in prescriptions)
+        {
+            Console.WriteLine($"- {prescription}");
+        }
+    }
 }
 
-public class HealthManagementSystem
+// Application Entry Point
+class Program
 {
+    static void Main()
+    {
+        HealthSystemApp app = new HealthSystemApp();
 
+        // Initialize data
+        app.SeedData();
+        app.BuildPrescriptionMap();
+
+        // Display patients
+        app.PrintAllPatients();
+
+        // Show prescriptions for sample patient (ID: 1)
+        app.PrintPrescriptionsForPatient(1);
+
+
+    }
 }
 
