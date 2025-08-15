@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 // Finance management system
@@ -253,33 +254,6 @@ public class HealthSystemApp
     }
 }
 
-// Application Entry Point
-class Program
-{
-    static void Main()
-    {
-        // Run Finance App
-        FinanceApp financeApp = new FinanceApp();
-        financeApp.Run();
-
-        // Run Health System App
-        HealthSystemApp healthApp = new HealthSystemApp();
-        healthApp.SeedData();
-        healthApp.BuildPrescriptionMap();
-        healthApp.PrintAllPatients();
-        healthApp.PrintPrescriptionsForPatient(1);
-
-        string filePath = " student.txt";
-        string[] Student = { "Student Id", "Full name", "Score" };
-
-        ststic void ReadFromFile(string filePath) { 
-        
-        }
-    }
-}
-//Question 3 
-
-
 // Marker Interface for Inventory Items
 public interface IInventoryItem
 {
@@ -431,76 +405,139 @@ public class WarehouseManager
     }
 }
 
+// Custom Exception Classes for Student System
+public class InvalidScoreFormatException : Exception
+{
+    public InvalidScoreFormatException(string message) : base(message) { }
+}
+
+public class MissingFieldException : Exception
+{
+    public MissingFieldException(string message) : base(message) { }
+}
+
+// Student Class
+public class Student
+{
+    public int Id { get; }
+    public string FullName { get; }
+    public int Score { get; }
+
+    public Student(int id, string fullName, int score)
+    {
+        Id = id;
+        FullName = fullName;
+        Score = score;
+    }
+
+    public string GetGrade()
+    {
+        if (Score >= 80) return "A";
+        if (Score >= 70) return "B";
+        if (Score >= 60) return "C";
+        if (Score >= 50) return "D";
+        return "F";
+    }
+}
+
+// StudentResultProcessor Class
+public class StudentResultProcessor
+{
+    public List<Student> ReadStudentsFromFile(string inputFilePath)
+    {
+        var students = new List<Student>();
+
+        using (StreamReader reader = new StreamReader(inputFilePath))
+        {
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                var fields = line.Split(',');
+
+                if (fields.Length < 3)
+                {
+                    throw new MissingFieldException("One or more fields are missing in the input line.");
+                }
+
+                if (!int.TryParse(fields[2].Trim(), out int score))
+                {
+                    throw new InvalidScoreFormatException($"Invalid score format for student: {fields[1].Trim()}");
+                }
+
+                int id = int.Parse(fields[0].Trim());
+                string fullName = fields[1].Trim();
+
+                students.Add(new Student(id, fullName, score));
+            }
+        }
+
+        return students;
+    }
+
+    public void WriteReportToFile(List<Student> students, string outputFilePath)
+    {
+        using (StreamWriter writer = new StreamWriter(outputFilePath))
+        {
+            foreach (var student in students)
+            {
+                writer.WriteLine($"{student.FullName} (ID: {student.Id}): Score = {student.Score}, Grade = {student.GetGrade()}");
+            }
+        }
+    }
+}
+
 // Main Application
 class Program
 {
     static void Main()
     {
-        WarehouseManager manager = new WarehouseManager();
-        manager.SeedData();
+        // Run Finance App
+        FinanceApp financeApp = new FinanceApp();
+        financeApp.Run();
 
+        // Run Health System App
+        HealthSystemApp healthApp = new HealthSystemApp();
+        healthApp.SeedData();
+        healthApp.BuildPrescriptionMap();
+        healthApp.PrintAllPatients();
+        healthApp.PrintPrescriptionsForPatient(1);
+
+        // Run Warehouse Manager
+        WarehouseManager warehouseManager = new WarehouseManager();
+        warehouseManager.SeedData();
         Console.WriteLine("--- Grocery Items ---");
-        manager.PrintAllItems(manager._groceries);
-
+        warehouseManager.PrintAllItems(warehouseManager._groceries);
         Console.WriteLine("--- Electronic Items ---");
-        manager.PrintAllItems(manager._electronics);
+        warehouseManager.PrintAllItems(warehouseManager._electronics);
 
-        // Test Exception Handling
-        try
-        {
-            manager._electronics.AddItem(new ElectronicItem(1, "SmartPhone", 5, "BrandC", 12)); // Duplicate ID
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
+        // Run Student Result Processor
+        string inputFilePath = "students.txt"; // Input file path
+        string outputFilePath = "report.txt";   // Output file path
+        var studentProcessor = new StudentResultProcessor();
 
         try
         {
-            manager.RemoveItemById(manager._groceries, 3); // Non-existent ID
+            // Read students from file
+            List<Student> students = studentProcessor.ReadStudentsFromFile(inputFilePath);
+            // Write report to file
+            studentProcessor.WriteReportToFile(students, outputFilePath);
+            Console.WriteLine("Report generated successfully.");
         }
-        catch (Exception ex)
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine($"Error: Input file not found. {ex.Message}");
+        }
+        catch (InvalidScoreFormatException ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
-
-        try
+        catch (MissingFieldException ex)
         {
-            manager._groceries.UpdateQuantity(1, -5); // Invalid quantity
+            Console.WriteLine($"Error: {ex.Message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Unexpected error: {ex.Message}");
         }
     }
 }
-
-//Q4
-public class Student
-{
-    private int Id;
-    private String FullName;
-    private int Score;
-
-    public void GetGrade() {
-        if (Score >= 80 && Score <= 100) {
-            Console.WriteLine("A")
-        } else if (Score >= 70 && Score <= 79) { 
-        Console.WriteLine("B")
-        }
-        else if (Score >= 60 && Score <= 69)
-        {
-            Console.WriteLine("C")
-        }
-        else if (Score >= 50 && Score <= 59)
-        {
-            Console.WriteLine("D")
-        }
-        else { 
-         Console.WriteLine("F")
-        }
-
-    }
-}
-
-
